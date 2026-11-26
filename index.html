@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>부다페스트 크리스마스 여행</title>
+<style>
+:root{--red:#b3202a;--green:#1f5a3d;--gold:#d9a93b;--cream:#fff8ec;--ink:#2b1d1d;--card:#fff;--line:#eadfca}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,"Malgun Gothic",sans-serif;background:var(--cream);color:var(--ink);padding-bottom:76px}
+header{background:linear-gradient(135deg,var(--red),#7d1219);color:#fff;padding:18px 16px 14px;text-align:center;border-bottom:4px solid var(--gold)}
+header h1{margin:0;font-size:20px}header p{margin:4px 0 0;font-size:13px;opacity:.9}
+main{padding:14px 16px;max-width:560px;margin:0 auto}
+.tab{display:none}.tab.on{display:block}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#fff;border-top:2px solid var(--gold);padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav button{flex:1;border:0;background:none;padding:10px 0;font-size:12px;color:#777;min-height:56px}
+nav button b{display:block;font-size:20px}nav button.on{color:var(--red);font-weight:700}
+.days{display:flex;gap:8px;margin-bottom:12px}
+.days button{flex:1;padding:10px 0;border-radius:12px;border:2px solid var(--green);background:#fff;color:var(--green);font-weight:700;font-size:14px}
+.days button.on{background:var(--green);color:#fff}
+.hero{height:150px;border-radius:16px;background:linear-gradient(135deg,var(--green),#10382a) center/cover;margin-bottom:12px;display:flex;align-items:flex-end;color:#fff;font-weight:700;padding:12px;text-shadow:0 1px 6px #000}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
+.item .t{color:var(--red);font-weight:700;font-size:13px}.item .n{font-weight:700;font-size:16px;margin:2px 0}.item .m{font-size:13px;color:#666;white-space:pre-wrap}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.btn{border:1px solid var(--green);background:#fff;color:var(--green);border-radius:10px;padding:8px 12px;font-size:13px;text-decoration:none;min-height:36px}
+.btn.p{background:var(--red);border-color:var(--red);color:#fff}.btn.d{border-color:#c33;color:#c33}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:15px;margin-bottom:8px;font-family:inherit;background:#fff}
+iframe{width:100%;height:280px;border:0;border-radius:14px;margin-bottom:12px}
+.sum{background:var(--green);color:#fff;border-radius:14px;padding:14px;margin-bottom:12px}
+.sum big{font-size:22px;font-weight:700}
+.chk{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.chk input{width:22px;height:22px;margin:0}.chk.done span{text-decoration:line-through;color:#999}.chk span{flex:1}
+h3{margin:14px 0 8px;color:var(--green)}
+#snow{position:fixed;inset:0;pointer-events:none;z-index:9}
+</style>
+</head>
+<body>
+<canvas id="snow"></canvas>
+<header><h1>🎄 부다페스트 크리스마스 여행</h1><p>12/14(월) ~ 12/17(목)</p></header>
+<main>
+<section id="tab-plan" class="tab on"></section>
+<section id="tab-map" class="tab"></section>
+<section id="tab-money" class="tab"></section>
+<section id="tab-pack" class="tab"></section>
+</main>
+<nav>
+<button data-t="plan" class="on"><b>📅</b>일정</button>
+<button data-t="map"><b>🗺️</b>지도</button>
+<button data-t="money"><b>💶</b>비용</button>
+<button data-t="pack"><b>🎒</b>준비물</button>
+</nav>
+<script>
+const HOTEL='Novotel Budapest Danube';
+const DEFAULT={
+ days:[
+  {date:'12/14(월)',title:'도착 · 야경',img:'images/day1.jpg',items:[
+   {time:'16:30',title:'부다페스트 공항 도착',place:'Budapest Airport',note:'입국 후 Bolt 택시로 숙소 이동 (캐리어 2개 → 일반 Bolt로 충분, 짐 많으면 큰 차량 옵션)'},
+   {time:'18:00',title:'호텔 체크인',place:HOTEL,note:'국회의사당 뷰'},
+   {time:'19:00',title:'저녁: 호텔 식당',place:HOTEL,note:'첫날은 숙소에서 편하게'},
+   {time:'20:30',title:'국회의사당 야경 · 신발들 추모비',place:'Shoes on the Danube Bank',note:'다뉴브 강변 산책'}]},
+  {date:'12/15(화)',title:'부다 지구 · 어부의 요새',img:'images/day2.jpg',items:[
+   {time:'09:30',title:'카페: Ruszwurm',place:'Ruszwurm Cukrászda Budapest',note:'성 지구 오래된 제과점'},
+   {time:'10:30',title:'어부의 요새 · 마차시 성당',place:'Fisherman\'s Bastion Budapest',note:'필수! 낮에 상층 테라스(유료) 입장. 오전 일찍이 한산'},
+   {time:'12:30',title:'점심 (가볍게)',place:'Mazel Tov Budapest',note:'합리적인 가격대'},
+   {time:'14:30',title:'헝가리 국립미술관 (부다 성)',place:'Hungarian National Gallery Budapest',note:'고전 회화·중세 제단화. 운영시간 확인'},
+   {time:'18:30',title:'저녁 (오늘의 포인트 식사)',place:'Borkonyha Budapest',note:'미슐랭 가이드 선정. 비싸도 OK → 예약 필수'}]},
+  {date:'12/16(수)',title:'미술관 · 쇼핑 · 마켓',img:'images/day3.jpg',items:[
+   {time:'10:00',title:'순수미술관 (영웅광장)',place:'Museum of Fine Arts Budapest',note:'고전 회화(올드 마스터) 중심. 온천 제외'},
+   {time:'12:30',title:'점심',place:'Menza Budapest',note:''},
+   {time:'14:00',title:'명품 쇼핑: 언드라시 거리',place:'Andrássy út Budapest',note:'예산 100만원. 패션 스트리트(Deák Ferenc utca)도 근처. 영수증 보관(세금환급)'},
+   {time:'16:00',title:'카페: Gerbeaud',place:'Gerbeaud Budapest',note:'또는 New York Café'},
+   {time:'17:30',title:'크리스마스 마켓',place:'Vörösmarty tér Christmas Market Budapest',note:'굴라시 + 굴뚝빵(쿠르토시칼라치)'}]},
+  {date:'12/17(목)',title:'마무리 · 17:00 출국',img:'images/day4.jpg',items:[
+   {time:'09:30',title:'성 이슈트반 대성당 · 국회의사당 외관',place:'St. Stephen\'s Basilica Budapest',note:''},
+   {time:'10:30',title:'카페 + 이른 점심',place:'',note:'12:00 체크아웃 전에 끝내기'},
+   {time:'11:15',title:'짐 정리',place:HOTEL,note:'세금환급 받을 물건은 캐리어 안 깊숙이 넣지 말고 꺼내기 쉽게'},
+   {time:'12:00',title:'체크아웃 → 공항 출발',place:HOTEL,note:'Bolt 30~40분'},
+   {time:'13:00',title:'공항 도착 · 세금환급 → 짐 부치기',place:'Budapest Airport',note:'환급 도장을 먼저 받고 수하물 위탁. 17:00 출국'}]}
+ ],
+ expenses:[],rate:0.0037,budget:1000000,
+ pack:[['여권',0],['항공권/e-티켓',0],['유심/eSIM',0],['카드(해외결제)',0],['포린트 소액 현금',0],['패딩·목도리·장갑',0],['보온 신발',0],['보조배터리',0],['멀티 어댑터(C타입)',0],['상비약',0],['핫팩',0],['접이식 우산',0]]
+   .map(([n,d])=>({n,d}))
+};
+let S;
+try{S=JSON.parse(localStorage.getItem('budapest-v2'))}catch(e){}
+if(!S||!S.days)S=JSON.parse(JSON.stringify(DEFAULT));
+S.days.forEach((d,i)=>{if(DEFAULT.days[i])d.img=DEFAULT.days[i].img});
+const save=()=>{try{localStorage.setItem('budapest-v2',JSON.stringify(S))}catch(e){}};
+let day=0,tab='plan';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const mapQ=p=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p+' Budapest');
+const dirQ=(p)=>'https://www.google.com/maps/dir/?api=1&travelmode=transit&origin='+encodeURIComponent(HOTEL)+'&destination='+encodeURIComponent(p+' Budapest');
+
+function renderPlan(){
+ const d=S.days[day];
+ let h='<div class="days">'+S.days.map((x,i)=>`<button data-d="${i}" class="${i==day?'on':''}">${i+1}일차</button>`).join('')+'</div>';
+ h+=`<div class="hero" ${d.img?`style="background-image:linear-gradient(transparent 40%,rgba(0,0,0,.6)),url('${esc(d.img)}')"`:''}>${esc(d.date)} · ${esc(d.title)}</div>`;
+ d.items.forEach((it,i)=>{
+  h+=`<div class="card item"><div class="t">${esc(it.time)}</div><div class="n">${esc(it.title)}</div>${it.note?`<div class="m">${esc(it.note)}</div>`:''}
+  <div class="row">${it.place?`<a class="btn" target="_blank" href="${mapQ(it.place)}">📍지도</a><a class="btn" target="_blank" href="${dirQ(it.place)}">🚇길찾기</a>`:''}
+  <button class="btn" data-a="up" data-i="${i}">↑</button><button class="btn" data-a="dn" data-i="${i}">↓</button>
+  <button class="btn" data-a="edit" data-i="${i}">수정</button><button class="btn d" data-a="del" data-i="${i}">삭제</button></div></div>`;});
+ h+='<button class="btn p" style="width:100%;padding:12px" data-a="add">＋ 일정 추가</button>';
+ $('#tab-plan').innerHTML=h;
+}
+function renderMap(){
+ const d=S.days[day];
+ const first=d.items.find(i=>i.place);
+ let h='<div class="days">'+S.days.map((x,i)=>`<button data-d="${i}" class="${i==day?'on':''}">${i+1}일차</button>`).join('')+'</div>';
+ const q=first?first.place+' Budapest':'Budapest';
+ h+=`<iframe loading="lazy" src="https://www.google.com/maps?q=${encodeURIComponent(q)}&output=embed"></iframe>`;
+ d.items.filter(i=>i.place).forEach(it=>{h+=`<div class="card item"><div class="t">${esc(it.time)}</div><div class="n">${esc(it.title)}</div>
+  <div class="row"><a class="btn" target="_blank" href="${mapQ(it.place)}">📍열기</a><a class="btn" target="_blank" href="${dirQ(it.place)}">🚇호텔에서 길찾기</a></div></div>`});
+ $('#tab-map').innerHTML=h;
+}
+function renderMoney(){
+ const tot=S.expenses.reduce((a,e)=>a+(e.cur=='HUF'?+e.amt:+e.amt/S.rate),0);
+ const shop=S.expenses.filter(e=>e.cat=='쇼핑').reduce((a,e)=>a+(e.cur=='KRW'?+e.amt:+e.amt*S.rate),0);
+ let h=`<div class="sum">총 지출<br><big>${Math.round(tot).toLocaleString()} HUF</big><br>≈ ${Math.round(tot*S.rate).toLocaleString()}원<br><br>쇼핑 예산 ${Math.round(shop).toLocaleString()} / ${S.budget.toLocaleString()}원<br><small>환율 1 HUF = ${S.rate}원 <a href="#" data-a="rate" style="color:#fff">변경</a></small></div>
+ <div class="card"><input id="e-name" placeholder="항목 (예: 점심 굴라시)"><div style="display:flex;gap:6px"><input id="e-amt" type="number" inputmode="decimal" placeholder="금액"><select id="e-cur" style="width:90px"><option>HUF</option><option>KRW</option></select></div>
+ <select id="e-cat"><option>식사</option><option>카페</option><option>교통</option><option>입장료</option><option>쇼핑</option><option>기타</option></select>
+ <button class="btn p" style="width:100%;padding:12px" data-a="eadd">지출 추가</button></div>`;
+ S.expenses.slice().reverse().forEach((e,k)=>{const i=S.expenses.length-1-k;h+=`<div class="card"><b>${esc(e.name)}</b> <small>${esc(e.cat)}</small><br>${(+e.amt).toLocaleString()} ${e.cur}
+  <button class="btn d" style="float:right" data-a="edel" data-i="${i}">삭제</button></div>`});
+ $('#tab-money').innerHTML=h;
+}
+function renderPack(){
+ const n=S.pack.filter(p=>p.d).length;
+ let h=`<div class="sum">준비 완료 <big>${n} / ${S.pack.length}</big></div><div class="card" style="display:flex;gap:6px"><input id="p-new" placeholder="준비물 추가" style="margin:0"><button class="btn p" data-a="padd">추가</button></div><div class="card">`;
+ S.pack.forEach((p,i)=>{h+=`<label class="chk ${p.d?'done':''}"><input type="checkbox" data-a="ptog" data-i="${i}" ${p.d?'checked':''}><span>${esc(p.n)}</span><button class="btn d" data-a="pdel" data-i="${i}">✕</button></label>`});
+ $('#tab-pack').innerHTML=h+'</div>';
+}
+function render(){renderPlan();renderMap();renderMoney();renderPack();}
+function form(it){
+ const time=prompt('시간 (예: 10:30)',it?.time||'');if(time===null)return null;
+ const title=prompt('제목',it?.title||'');if(!title)return null;
+ const place=prompt('지도 검색어 (장소명, 없으면 비움)',it?.place||'');if(place===null)return null;
+ const note=prompt('메모',it?.note||'');if(note===null)return null;
+ return{time,title,place,note};
+}
+document.addEventListener('click',e=>{
+ const nb=e.target.closest('nav button');
+ if(nb){tab=nb.dataset.t;document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b==nb));document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id=='tab-'+tab));return}
+ const db=e.target.closest('[data-d]');if(db){day=+db.dataset.d;render();return}
+ const b=e.target.closest('[data-a]');if(!b||b.type=='checkbox')return;
+ const a=b.dataset.a,i=+b.dataset.i,items=S.days[day].items;
+ if(a=='rate'){e.preventDefault();const v=parseFloat(prompt('1 HUF = ? 원',S.rate));if(v>0)S.rate=v}
+ else if(a=='add'){const f=form();if(f)items.push(f)}
+ else if(a=='edit'){const f=form(items[i]);if(f)items[i]=f}
+ else if(a=='del'){if(confirm('삭제할까요?'))items.splice(i,1)}
+ else if(a=='up'&&i>0)[items[i-1],items[i]]=[items[i],items[i-1]]
+ else if(a=='dn'&&i<items.length-1)[items[i+1],items[i]]=[items[i],items[i+1]]
+ else if(a=='eadd'){const name=$('#e-name').value.trim(),amt=parseFloat($('#e-amt').value);if(!name||!(amt>0))return alert('항목과 금액을 입력하세요');S.expenses.push({name,amt,cur:$('#e-cur').value,cat:$('#e-cat').value})}
+ else if(a=='edel'){S.expenses.splice(i,1)}
+ else if(a=='padd'){const v=$('#p-new').value.trim();if(v)S.pack.push({n:v,d:0})}
+ else if(a=='pdel'){e.preventDefault();S.pack.splice(i,1)}
+ else return;
+ save();render();
+});
+document.addEventListener('change',e=>{const c=e.target;if(c.dataset.a=='ptog'){S.pack[+c.dataset.i].d=c.checked?1:0;save();renderPack()}});
+render();
+// 눈 내리는 효과
+(function(){const c=$('#snow'),x=c.getContext('2d');let W,H,f=[];
+ const rs=()=>{W=c.width=innerWidth;H=c.height=innerHeight};rs();addEventListener('resize',rs);
+ for(let i=0;i<45;i++)f.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2.5,s:.4+Math.random()*1,d:Math.random()*6});
+ (function t(){x.clearRect(0,0,W,H);x.fillStyle='rgba(255,255,255,.9)';x.shadowColor='rgba(120,120,120,.5)';x.shadowBlur=3;
+  f.forEach(p=>{p.y+=p.s;p.d+=.02;p.x+=Math.sin(p.d)*.5;if(p.y>H){p.y=-5;p.x=Math.random()*W}x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill()});
+  requestAnimationFrame(t)})()})();
+</script>
+</body>
+</html>
